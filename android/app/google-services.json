@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "496989429888",
+    "project_id": "flutterjikan",
+    "storage_bucket": "flutterjikan.appspot.com",
+    "firebase_url": "https://flutterjikan-default-rtdb.asia-southeast1.firebasedatabase.app/"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:496989429888:android:11e0881dbc46bf3d4e8665",
+        "android_client_info": {
+          "package_name": "com.example.flutter_jikan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "496989429888-q05lhp8ivhf00tdg9mu36oi1ftoij1b6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAl2y1RkY2fRF0FFGXwQdFMjTJjKc21wIY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "496989429888-q05lhp8ivhf00tdg9mu36oi1ftoij1b6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
