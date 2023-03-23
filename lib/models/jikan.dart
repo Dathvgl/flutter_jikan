@@ -45,28 +45,14 @@ abstract class JikanRoot {
   static AspectRatio imageBase({required String url}) {
     return AspectRatio(
       aspectRatio: 0.75,
-      // child: Image.network(
-      //   fit: BoxFit.cover,
-      //   url,
-      //   errorBuilder: (context, error, stackTrace) {
-      //     return const Center(
-      //       child: Text(
-      //         "Error Image",
-      //         style: TextStyle(
-      //           color: Color(0xFFC62828),
-      //           fontSize: 20,
-      //           fontWeight: FontWeight.bold,
-      //         ),
-      //       ),
-      //     );
-      //   },
-      // ),
       child: CachedNetworkImage(
         fit: BoxFit.cover,
         imageUrl: url,
         progressIndicatorBuilder: (context, url, progress) {
-          return CircularProgressIndicator(
-            value: progress.progress,
+          return Center(
+            child: CircularProgressIndicator(
+              value: progress.progress,
+            ),
           );
         },
         errorWidget: (context, error, stackTrace) {
@@ -116,12 +102,12 @@ abstract class JikanAnime {
 
   static Future<List<Anime>> getTopAnime({
     TopType? type,
-    TopSubtype? subtype,
+    TopFilter? filter,
     int page = 1,
   }) async {
     var url = '/top/anime?page=$page';
     url += type == null ? '' : '&type=${_enumStr(type)}';
-    url += subtype == null ? '' : '&filter=${_enumStr(subtype)}';
+    url += filter == null ? '' : '&filter=${_enumStr(filter)}';
 
     final response = await _httpUri(url: url);
     final code = response.statusCode;

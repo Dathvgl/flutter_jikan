@@ -15,6 +15,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
   Future<List<Anime>> airAnime = Future(() => []);
   Future<List<Anime>> upAnime = Future(() => []);
 
+  bool didDispose = false;
+
   final sbHeight = const SizedBox(height: 30);
 
   @override
@@ -26,21 +28,29 @@ class _DiscoverPageState extends State<DiscoverPage> {
     delayed("upcoming");
   }
 
+  @override
+  void dispose() {
+    didDispose = true;
+    super.dispose();
+  }
+
   delayed(String filter) {
     Future.delayed(const Duration(seconds: 2), () {
-      setState(() {
-        switch (filter) {
-          case "favorite":
-            favAnime = JikanAnime.getTopAnime(subtype: TopSubtype.favorite);
-            break;
-          case "airing":
-            airAnime = JikanAnime.getTopAnime(subtype: TopSubtype.airing);
-            break;
-          case "upcoming":
-            upAnime = JikanAnime.getTopAnime(subtype: TopSubtype.upcoming);
-            break;
-        }
-      });
+      if (!didDispose) {
+        setState(() {
+          switch (filter) {
+            case "favorite":
+              favAnime = JikanAnime.getTopAnime(filter: TopFilter.favorite);
+              break;
+            case "airing":
+              airAnime = JikanAnime.getTopAnime(filter: TopFilter.airing);
+              break;
+            case "upcoming":
+              upAnime = JikanAnime.getTopAnime(filter: TopFilter.upcoming);
+              break;
+          }
+        });
+      }
     });
   }
 

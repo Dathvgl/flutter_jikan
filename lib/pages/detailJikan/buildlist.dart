@@ -111,13 +111,13 @@ class BuildReviewDart extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Icon(Icons.star),
-                          Text("${item.scores} by ${item.user.username}"),
+                          Text("${item.score} by ${item.user.username}"),
                         ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("${item.votes} votes"),
+                          // Text("${item} votes"),
                           Text(date),
                         ],
                       ),

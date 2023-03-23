@@ -6,6 +6,7 @@ import 'package:flutter_jikan/components/navigation/home.dart';
 import 'package:flutter_jikan/firebase/auth/home.dart';
 import 'package:flutter_jikan/firebase/database/home.dart';
 import 'package:flutter_jikan/firebase/firebase_options.dart';
+import 'package:flutter_jikan/firebase/store/home.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -23,6 +24,7 @@ Future<void> init() async {
   );
 
   Get.lazyPut(() => AuthFirebase());
+  Get.lazyPut(() => StoreFirebase());
   Get.lazyPut(() => RealtimeFirebase());
 }
 

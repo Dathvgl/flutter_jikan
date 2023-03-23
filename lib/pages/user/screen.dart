@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_jikan/firebase/auth/home.dart';
+import 'package:flutter_jikan/firebase/store/user.dart';
 import 'package:flutter_jikan/models/providers/my_list.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:go_router_flow/go_router_flow.dart';
@@ -42,6 +43,7 @@ class LoginDart extends StatelessWidget {
       onSignup: _signupUser,
       onRecoverPassword: _recoverPassword,
       onSubmitAnimationCompleted: () {
+        UserStore.getUser(auth.uid);
         context.read<MyListProvider>().init();
         context.go("/home");
       },

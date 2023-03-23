@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_jikan/firebase/store/user.dart';
+import 'package:flutter_jikan/models/jsons/user.dart';
 import 'package:flutter_jikan/models/providers/my_list.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -11,68 +13,13 @@ AuthFirebase get auth => Get.find<AuthFirebase>();
 class AuthFirebase {
   final _firebaseAuth = FirebaseAuth.instance;
 
+  Map<String, dynamic> info = UserModel(name: "Unknown").toJson();
+
   bool get isAuthen => _firebaseAuth.currentUser != null;
 
   String get uid => _firebaseAuth.currentUser!.uid;
 
-  Map<String, dynamic> get info => {
-    "name": _firebaseAuth.currentUser?.displayName,
-    "image": _firebaseAuth.currentUser?.photoURL,
-  };
-
   Stream<User?> get state => _firebaseAuth.authStateChanges();
-
-  // String get userName => isAuthen ? _firebaseAuth.currentUser!.email ?? "" : "";
-
-  // void sendEmailLink({
-  //   required String email,
-  // }) async {
-  //   SPService.instance.setString('passwordLessEmail', email);
-  //   await _firebaseAuth
-  //       .sendSignInLinkToEmail(
-  //         email: email,
-  //         actionCodeSettings: ActionCodeSettings(
-  //           url: "https://flutterjikanapi.page.link/29hQ?email=$email",
-  //           handleCodeInApp: true,
-  //           androidPackageName: "com.example.flutter_jikan_api",
-  //         ),
-  //       )
-  //       .catchError((onError) => print("Error: $onError"));
-  // }
-
-  // void retrieveEmailLink({
-  //   required bool state,
-  // }) async {
-  //   final email = SPService.instance.getString('passwordLessEmail') ?? '';
-  //   PendingDynamicLinkData? dynamicLinkData;
-
-  //   Uri? deepLink;
-  //   if (state) {
-  //     dynamicLinkData = await FirebaseDynamicLinks.instance.getInitialLink();
-  //     if (dynamicLinkData != null) {
-  //       deepLink = dynamicLinkData.link;
-  //     }
-  //   } else {
-  //     dynamicLinkData = await FirebaseDynamicLinks.instance.onLink.first;
-  //     deepLink = dynamicLinkData.link;
-  //   }
-
-  //   if (deepLink != null) {
-  //     bool validLink = _firebaseAuth.isSignInWithEmailLink(deepLink.toString());
-
-  //     SPService.instance.setString('passwordLessEmail', '');
-  //     if (validLink) {
-  //       final userCredential = await _firebaseAuth.signInWithEmailLink(
-  //         email: email,
-  //         emailLink: deepLink.toString(),
-  //       );
-
-  //       if (userCredential.user != null) {
-  //         print("None user");
-  //       }
-  //     }
-  //   }
-  // }
 
   Future<String?> signUp({
     required String? email,
@@ -80,10 +27,20 @@ class AuthFirebase {
   }) async {
     if (email is String && password is String) {
       try {
-        await _firebaseAuth.createUserWithEmailAndPassword(
+        await _firebaseAuth
+            .createUserWithEmailAndPassword(
           email: email,
           password: password,
-        );
+        )
+            .then((value) {
+          final item = UserModel(
+            id: value.user?.uid,
+            name: "Unknow",
+            dateCreate: DateTime.now().toIso8601String(),
+          );
+
+          UserStore.addUser(item);
+        });
       } on FirebaseAuthException catch (e) {
         switch (e.code) {
           case "weak-password":

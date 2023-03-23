@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_jikan/components/navigation/home.dart';
 import 'package:flutter_jikan/models/jikan.dart';
+import 'package:flutter_jikan/models/jsons/club.dart';
 import 'package:flutter_jikan/models/jsons/my_list.dart';
+import 'package:flutter_jikan/models/jsons/post.dart';
 import 'package:flutter_jikan/pages/detailJikan/home.dart';
 import 'package:flutter_jikan/pages/discover.dart';
-import 'package:flutter_jikan/pages/discussion.dart';
+import 'package:flutter_jikan/pages/discussion/club/home.dart';
+import 'package:flutter_jikan/pages/discussion/club/post/comment.dart';
+import 'package:flutter_jikan/pages/discussion/form.dart';
+import 'package:flutter_jikan/pages/discussion/home.dart';
+import 'package:flutter_jikan/pages/discussion/my_clubs.dart';
 import 'package:flutter_jikan/pages/home/home.dart';
 import 'package:flutter_jikan/pages/myList/home.dart';
 import 'package:flutter_jikan/pages/myList/item/home.dart';
@@ -36,6 +42,38 @@ abstract class GoRouterDart {
           GoRoute(
             path: "/discussion",
             builder: (context, state) => const DiscussionPage(),
+            routes: [
+              GoRoute(
+                parentNavigatorKey: _rootNavigatorKey,
+                path: "club/:id",
+                builder: (context, state) {
+                  final extra = state.extra as ClubModel;
+                  return DiscussionClubPage(club: extra);
+                },
+                routes: [
+                  GoRoute(
+                    parentNavigatorKey: _rootNavigatorKey,
+                    path: "comment",
+                    builder: (context, state) {
+                      final extra = state.extra as Map<String, dynamic>;
+                      return DiscussionClubPostComment(
+                        clubId: extra["clubId"] as String,
+                        post: extra["post"] as PostModel,
+                      );
+                    },
+                  ),
+                ],
+              ),
+              GoRoute(
+                path: "myClub",
+                builder: (context, state) => const DiscussionMyClubsPage(),
+              ),
+              GoRoute(
+                parentNavigatorKey: _rootNavigatorKey,
+                path: "formClub",
+                builder: (context, state) => const DiscussionFormPage(),
+              ),
+            ],
           ),
           GoRoute(
             path: "/discover",

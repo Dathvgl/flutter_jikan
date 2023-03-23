@@ -16,6 +16,23 @@ class MyListPage extends StatefulWidget {
 }
 
 class _MyListPageState extends State<MyListPage> with TickerProviderStateMixin {
+  late TabController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TabController(
+      length: tabs.length,
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   final tabs = [
     const Text("All"),
     Text(ItemStateType.watching.name),
@@ -41,11 +58,6 @@ class _MyListPageState extends State<MyListPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final controller = TabController(
-      length: tabs.length,
-      vsync: this,
-    );
-
     return authBuild(
       none: AlertDialog(
         title: const Text("Need sign in!"),
