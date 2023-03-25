@@ -59,6 +59,9 @@ dependencies:
   cached_network_image: ^3.2.3
   cloud_firestore: ^4.4.5
   uuid: ^3.0.7
+  font_awesome_flutter: ^10.4.0
+  google_sign_in: ^6.0.2
+  flutter_facebook_auth: ^5.0.8
 
 dev_dependencies:
   flutter_test:

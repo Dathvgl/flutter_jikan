@@ -3,6 +3,7 @@ import 'package:flutter_jikan/firebase/auth/home.dart';
 import 'package:flutter_jikan/firebase/store/user.dart';
 import 'package:flutter_jikan/models/providers/my_list.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router_flow/go_router_flow.dart';
 import 'package:provider/provider.dart';
 
@@ -47,6 +48,34 @@ class LoginDart extends StatelessWidget {
         context.read<MyListProvider>().init();
         context.go("/home");
       },
+      loginProviders: [
+        LoginProvider(
+          icon: FontAwesomeIcons.google,
+          callback: () async {
+            return Future.delayed(loginTime).then((_) {
+              return auth.google();
+            });
+          },
+        ),
+        LoginProvider(
+          icon: FontAwesomeIcons.facebookF,
+          callback: () async {
+            debugPrint('start facebook sign in');
+            await Future.delayed(loginTime);
+            debugPrint('stop facebook sign in');
+            return null;
+          },
+        ),
+        // LoginProvider(
+        //   icon: FontAwesomeIcons.githubAlt,
+        //   callback: () async {
+        //     debugPrint('start github sign in');
+        //     await Future.delayed(loginTime);
+        //     debugPrint('stop github sign in');
+        //     return null;
+        //   },
+        // ),
+      ],
     );
   }
 }

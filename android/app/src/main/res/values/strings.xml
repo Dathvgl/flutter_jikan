@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resource>
+    <string name="app_name">Flutter Jikan</string>
+    <string name="facebook_app_id">100920329632915</string>
+    <string name="fb_login_protocol_scheme">fb100920329632915</string>
+    <string name="facebook_client_token">909ce6c19cdc8fbc5b53364c1ccc5ff6</string>
+</resource>
