@@ -5,10 +5,12 @@ import 'package:flutter_jikan/models/jikan.dart';
 import 'package:jikan_api/jikan_api.dart';
 
 class CarouselDart extends StatelessWidget {
+  final Color? backgroundColor;
   final Future<List<Picture>> images;
 
   const CarouselDart({
     super.key,
+    this.backgroundColor,
     required this.images,
   });
 
@@ -18,6 +20,7 @@ class CarouselDart extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       width: MediaQuery.of(context).size.width * 0.6,
       decoration: BoxDecoration(
+        color: backgroundColor,
         border: Border.all(),
         borderRadius: BorderRadius.circular(10),
       ),

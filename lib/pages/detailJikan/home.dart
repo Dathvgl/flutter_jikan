@@ -115,6 +115,8 @@ class _DetailJikanHomeState extends State<DetailJikanHome> {
     'recommendations': null,
   };
 
+  final sbHeight = const SizedBox(height: 30);
+
   @override
   void initState() {
     super.initState();
@@ -194,190 +196,227 @@ class _DetailJikanHomeState extends State<DetailJikanHome> {
     );
   }
 
-  final sbHeight = const SizedBox(height: 30);
+  Widget infoBase(String name, int? num) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          name,
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(kDot(num ?? 0)),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     Anime anime = widget.anime;
     return httpBuild(
       snapshot: widget.snapshot,
-      widget: Padding(
-        padding: const EdgeInsets.only(
-          top: 20,
-          left: 20,
-          right: 20,
-          bottom: 80,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      widget: SingleChildScrollView(
+        child: Stack(
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              color: Colors.blue,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  CarouselDart(
-                    images: infoFList<Picture>(
-                      list: obj["images"],
+                  const Text(
+                    "Score",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                  Text("${anime.score}"),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 20,
+                left: 20,
+                right: 20,
+                bottom: 80,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Score"),
-                      Text("${anime.score}"),
-                      const Text("Rank"),
-                      Text(kDot(anime.rank ?? 0)),
-                      const Text("Popularity"),
-                      Text(kDot(anime.popularity ?? 0)),
-                      const Text("Members"),
-                      Text(kDot(anime.members ?? 0)),
-                      const Text("Favorites"),
-                      Text(kDot(anime.favorites ?? 0)),
+                      CarouselDart(
+                        backgroundColor: Colors.white,
+                        images: infoFList<Picture>(
+                          list: obj["images"],
+                        ),
+                      ),
+                      Wrap(
+                        direction: Axis.vertical,
+                        spacing: 5,
+                        runAlignment: WrapAlignment.end,
+                        crossAxisAlignment: WrapCrossAlignment.end,
+                        children: [
+                          const SizedBox(height: 35),
+                          infoBase("Rank", anime.rank),
+                          infoBase("Popularity", anime.popularity),
+                          infoBase("Members", anime.members),
+                          infoBase("Favorites", anime.favorites),
+                        ],
+                      ),
                     ],
                   ),
-                ],
-              ),
-              sbHeight,
-              JikanRoot.titleString(
-                title: anime.title,
-              ),
-              sbHeight,
-              Row(
-                children: [
-                  Text("${anime.type}"),
-                  Text("${anime.year}"),
-                ],
-              ),
-              sbHeight,
-              Center(
-                child: Wrap(
-                  spacing: 20,
-                  alignment: WrapAlignment.center,
-                  children: anime.genres
-                      .map(
-                        (item) => TextButton(
-                          onPressed: () {},
-                          child: Text(item.name),
+                  sbHeight,
+                  JikanRoot.titleString(
+                    title: anime.title,
+                  ),
+                  sbHeight,
+                  Row(
+                    children: [
+                      Text("${anime.type}"),
+                      Text("${anime.year}"),
+                    ],
+                  ),
+                  sbHeight,
+                  Center(
+                    child: Wrap(
+                      spacing: 20,
+                      alignment: WrapAlignment.center,
+                      children: anime.genres
+                          .map(
+                            (item) => TextButton(
+                              onPressed: () {},
+                              child: Text(item.name),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                  sbHeight,
+                  ExpandDart(
+                    less: Text(
+                      "${anime.synopsis}",
+                      maxLines: 4,
+                      softWrap: true,
+                      textAlign: TextAlign.justify,
+                    ),
+                    more: Text(
+                      "${anime.synopsis}",
+                      softWrap: true,
+                      textAlign: TextAlign.justify,
+                    ),
+                    lessText: "Less Sysnopsis",
+                    moreText: "More Sysnopsis",
+                  ),
+                  sbHeight,
+                  infoColumn(
+                    title: "English",
+                    text: anime.titleEnglish.toString(),
+                  ),
+                  sbHeight,
+                  Flexible(
+                    child: infoList(
+                      list: [
+                        infoColumn(
+                          title: "Source",
+                          text: anime.source.toString(),
                         ),
-                      )
-                      .toList(),
-                ),
-              ),
-              sbHeight,
-              ExpandDart(
-                less: Text(
-                  "${anime.synopsis}",
-                  maxLines: 4,
-                  softWrap: true,
-                  textAlign: TextAlign.justify,
-                ),
-                more: Text(
-                  "${anime.synopsis}",
-                  softWrap: true,
-                  textAlign: TextAlign.justify,
-                ),
-                lessText: "Less Sysnopsis",
-                moreText: "More Sysnopsis",
-              ),
-              sbHeight,
-              infoColumn(
-                title: "English",
-                text: anime.titleEnglish.toString(),
-              ),
-              sbHeight,
-              Flexible(
-                child: infoList(
-                  list: [
-                    infoColumn(
-                      title: "Source",
-                      text: anime.source.toString(),
+                        infoColumn(
+                          title: "Season",
+                          text: anime.season.toString(),
+                        ),
+                        infoColumn(
+                          title: "Studio",
+                          metas: anime.studios,
+                        ),
+                        infoColumn(
+                          title: "Aired",
+                          text: anime.aired.toString(),
+                        ),
+                        infoColumn(
+                          title: "Rating",
+                          text: anime.rating.toString(),
+                        ),
+                        infoColumn(
+                          title: "Licensor",
+                          metas: anime.licensors,
+                        ),
+                      ],
                     ),
-                    infoColumn(
-                      title: "Season",
-                      text: anime.season.toString(),
+                  ),
+                  // Align(
+                  //   alignment: Alignment.centerRight,
+                  //   child: TextButton(
+                  //     onPressed: () {},
+                  //     child: const Text("More infomation"),
+                  //   ),
+                  // ),
+                  sbHeight,
+                  RelationDart(
+                    relations: anime.relations,
+                  ),
+                  sbHeight,
+                  CharacterDart(
+                    characters: infoFList<CharacterMeta>(
+                      list: obj["characters"],
                     ),
-                    infoColumn(
-                      title: "Studio",
-                      metas: anime.studios,
+                  ),
+                  // Align(
+                  //   alignment: Alignment.centerRight,
+                  //   child: TextButton(
+                  //     onPressed: () {},
+                  //     child: const Text("More Cast"),
+                  //   ),
+                  // ),
+                  sbHeight,
+                  BuiltStaffDart(
+                    staffs: infoFList<PersonMeta>(
+                      list: obj["staffs"],
                     ),
-                    infoColumn(
-                      title: "Aired",
-                      text: anime.aired.toString(),
+                  ),
+                  // Align(
+                  //   alignment: Alignment.centerRight,
+                  //   child: TextButton(
+                  //     onPressed: () {},
+                  //     child: const Text("More staff"),
+                  //   ),
+                  // ),
+                  // sbHeight,
+                  // BuildReviewDart(
+                  //   reviews: infoFList<Review>(
+                  //     list: obj["reviews"],
+                  //   ),
+                  // ),
+                  sbHeight,
+                  BuiltRecommendDart(
+                    recommends: infoFList<Recommendation>(
+                      list: obj["recommendations"],
                     ),
-                    infoColumn(
-                      title: "Rating",
-                      text: anime.rating.toString(),
-                    ),
-                    infoColumn(
-                      title: "Licensor",
-                      metas: anime.licensors,
-                    ),
-                  ],
-                ),
+                  ),
+                  // Align(
+                  //   alignment: Alignment.centerRight,
+                  //   child: TextButton(
+                  //     onPressed: () {},
+                  //     child: const Text("More recommend"),
+                  //   ),
+                  // ),
+                  sbHeight,
+                  StatisticsDart(
+                    stats: statistic,
+                  ),
+                ],
               ),
-              // Align(
-              //   alignment: Alignment.centerRight,
-              //   child: TextButton(
-              //     onPressed: () {},
-              //     child: const Text("More infomation"),
-              //   ),
-              // ),
-              sbHeight,
-              RelationDart(
-                relations: anime.relations,
-              ),
-              sbHeight,
-              CharacterDart(
-                characters: infoFList<CharacterMeta>(
-                  list: obj["characters"],
-                ),
-              ),
-              // Align(
-              //   alignment: Alignment.centerRight,
-              //   child: TextButton(
-              //     onPressed: () {},
-              //     child: const Text("More Cast"),
-              //   ),
-              // ),
-              sbHeight,
-              BuiltStaffDart(
-                staffs: infoFList<PersonMeta>(
-                  list: obj["staffs"],
-                ),
-              ),
-              // Align(
-              //   alignment: Alignment.centerRight,
-              //   child: TextButton(
-              //     onPressed: () {},
-              //     child: const Text("More staff"),
-              //   ),
-              // ),
-              // sbHeight,
-              // BuildReviewDart(
-              //   reviews: infoFList<Review>(
-              //     list: obj["reviews"],
-              //   ),
-              // ),
-              sbHeight,
-              BuiltRecommendDart(
-                recommends: infoFList<Recommendation>(
-                  list: obj["recommendations"],
-                ),
-              ),
-              // Align(
-              //   alignment: Alignment.centerRight,
-              //   child: TextButton(
-              //     onPressed: () {},
-              //     child: const Text("More recommend"),
-              //   ),
-              // ),
-              sbHeight,
-              StatisticsDart(
-                stats: statistic,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
