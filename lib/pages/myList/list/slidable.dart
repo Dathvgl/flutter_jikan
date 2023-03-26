@@ -4,14 +4,12 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 class SlidableItem {
   final String label;
   final IconData icon;
-  final Map<String, dynamic> map;
   final Color backgroundColor;
-  final void Function(Map<String, dynamic> map) onPressed;
+  final VoidCallback onPressed;
 
   SlidableItem({
     required this.label,
     required this.icon,
-    required this.map,
     required this.backgroundColor,
     required this.onPressed,
   });
@@ -40,7 +38,7 @@ class MyListListSlidable extends StatelessWidget {
             icon: item.icon,
             backgroundColor: item.backgroundColor,
             onPressed: (context) {
-              item.onPressed(item.map);
+              item.onPressed();
             },
           );
         }).toList(),

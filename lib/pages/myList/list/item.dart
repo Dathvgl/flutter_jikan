@@ -51,22 +51,16 @@ class MyListListItem extends StatelessWidget {
           SlidableItem(
             label: "Go to",
             icon: Icons.explore,
-            map: {"malId": anime.malId},
             backgroundColor: Colors.green,
-            onPressed: (map) {
-              int malId = map["malId"] as int;
-              context.push("/detail-jikan/$malId");
+            onPressed: () {
+              context.push("/detail-jikan/${anime.malId}");
             },
           ),
           SlidableItem(
             label: "Note",
             icon: Icons.text_snippet_outlined,
-            map: {"id": anime.id},
             backgroundColor: Colors.blue,
-            onPressed: (map) {
-              // String id = map["id"] as String;
-              // context.go("/detail-jikan/$malId");
-            },
+            onPressed: () {},
           ),
         ],
         child: InkWell(

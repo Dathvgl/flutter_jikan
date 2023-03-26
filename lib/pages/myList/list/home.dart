@@ -164,7 +164,7 @@ class _MyListListState extends State<MyListList> {
                   if (value is String) {
                     List<MyListModel> list = [];
 
-                    if (type == "All") {
+                    if (value == "All") {
                       list = widget.myList;
                     } else {
                       list = widget.myList.where((item) {
