@@ -15,6 +15,8 @@ class ExpandDart extends StatelessWidget {
     required this.moreText,
   });
 
+  final sbHeight = const SizedBox(height: 10);
+
   @override
   Widget build(BuildContext context) {
     return ExpandableNotifier(
@@ -22,10 +24,16 @@ class ExpandDart extends StatelessWidget {
         collapsed: Column(
           children: [
             less,
+            sbHeight,
             Align(
               alignment: Alignment.centerRight,
               child: ExpandableButton(
-                child: Text(lessText),
+                child: Text(
+                  lessText,
+                  style: const TextStyle(
+                    color: Colors.blue,
+                  ),
+                ),
               ),
             ),
           ],
@@ -33,10 +41,16 @@ class ExpandDart extends StatelessWidget {
         expanded: Column(
           children: [
             more,
+            sbHeight,
             Align(
               alignment: Alignment.centerRight,
               child: ExpandableButton(
-                child: Text(moreText),
+                child: Text(
+                  moreText,
+                  style: const TextStyle(
+                    color: Colors.blue,
+                  ),
+                ),
               ),
             ),
           ],

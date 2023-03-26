@@ -29,6 +29,14 @@ class _NavPageState extends State<NavigationPage> {
     myListProvider.init();
   }
 
+  @override
+  void dispose() {
+    myListProvider.dispose();
+    myListProvider.listen?.cancel();
+    myListProvider.dispose();
+    super.dispose();
+  }
+
   void getCurrentAppTheme() async {
     themeChangeProvider.darkTheme =
         await themeChangeProvider.darkThemePreference.getTheme();

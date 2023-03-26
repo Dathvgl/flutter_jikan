@@ -22,18 +22,34 @@ class BuiltStaffDart extends StatelessWidget {
           snapshot: snapshot,
           widget: scrollableWin(
             context: context,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Wrap(
-                spacing: 20,
-                children: list.map((item) {
-                  return BuildListDart(
-                    url: item.imageUrl,
-                    name: item.name,
-                    list: item.positions?.asList(),
-                  );
-                }).toList(),
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (list.isNotEmpty) ...[
+                  const Text(
+                    "Some Staff",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Wrap(
+                    spacing: 20,
+                    children: list.map((item) {
+                      return BuildListDart(
+                        url: item.imageUrl,
+                        name: item.name,
+                        list: item.positions?.asList(),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
           ),
         );
@@ -60,18 +76,34 @@ class BuiltRecommendDart extends StatelessWidget {
           snapshot: snapshot,
           widget: scrollableWin(
             context: context,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Wrap(
-                spacing: 20,
-                children: list.map((item) {
-                  return BuildListDart(
-                    url: item.entry.imageUrl,
-                    name: item.entry.title,
-                    list: ["${item.votes} Members"],
-                  );
-                }).toList(),
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (list.isNotEmpty) ...[
+                  const Text(
+                    "Recommend Anime",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Wrap(
+                    spacing: 20,
+                    children: list.map((item) {
+                      return BuildListDart(
+                        url: item.entry.imageUrl,
+                        name: item.entry.title,
+                        list: ["${item.votes} Members"],
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
           ),
         );

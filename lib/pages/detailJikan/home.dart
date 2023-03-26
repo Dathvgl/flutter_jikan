@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_jikan/components/scaffod.dart';
+import 'package:flutter_jikan/firebase/auth/home.dart';
+import 'package:flutter_jikan/firebase/database/my_list.dart';
 import 'package:flutter_jikan/main.dart';
 import 'package:flutter_jikan/models/jikan.dart';
+import 'package:flutter_jikan/models/providers/my_list.dart';
 import 'package:flutter_jikan/pages/detailJikan/buildlist.dart';
 import 'package:flutter_jikan/pages/detailJikan/carousel.dart';
 import 'package:flutter_jikan/pages/detailJikan/character.dart';
@@ -10,8 +13,9 @@ import 'package:flutter_jikan/pages/detailJikan/expand.dart';
 import 'package:flutter_jikan/pages/detailJikan/relation.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:jikan_api/jikan_api.dart';
+import 'package:provider/provider.dart';
 
-class DetailJikanPage extends StatefulWidget {
+class DetailJikanPage extends StatelessWidget {
   final Future<Anime> jikan;
 
   const DetailJikanPage({
@@ -20,69 +24,61 @@ class DetailJikanPage extends StatefulWidget {
   });
 
   @override
-  State<DetailJikanPage> createState() => _DetailJikanPageState();
-}
-
-class _DetailJikanPageState extends State<DetailJikanPage> {
-  @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      drawer: null,
-      body: FutureBuilder(
-        future: widget.jikan,
-        builder: (context, snapshot) {
-          Anime? anime = snapshot.data;
-          if (anime == null) {
-            return const Center(
+    return FutureBuilder(
+      future: jikan,
+      builder: (context, snapshot) {
+        Anime? anime = snapshot.data;
+        if (anime == null) {
+          return const CustomScaffold(
+            drawer: null,
+            body: Center(
               child: Text("Loading..."),
-            );
-          } else {
-            return DetailJikanHome(
+            ),
+          );
+        } else {
+          return CustomScaffold(
+            drawer: null,
+            body: DetailJikanHome(
               anime: anime,
               snapshot: snapshot,
-            );
-          }
-        },
-      ),
-      floatingActionButton: CircleAvatar(
-        backgroundColor: Colors.black54,
-        child: IconButton(
-          onPressed: () {},
-          icon: const Icon(
-            Icons.addchart,
-            color: Colors.white,
-          ),
-        ),
-      ),
+            ),
+            floatingActionButton: CircleAvatar(
+              backgroundColor: Colors.black54,
+              child: Consumer<MyListProvider>(
+                builder: (context, value, child) {
+                  final check = value.userMalId.contains(anime.malId);
+
+                  return IconButton(
+                    onPressed: () async {
+                      if (auth.isAuthen) {
+                        if (check) {
+                          await MyListReal.deleteUserList(
+                            uid: auth.uid,
+                            id: value.userMyList.firstWhere((element) {
+                              return element.malId == anime.malId;
+                            }).id!,
+                          );
+                        } else {
+                          await MyListReal.setUserList(
+                            uid: auth.uid,
+                            anime: anime,
+                          );
+                        }
+                      }
+                    },
+                    icon: Icon(
+                      check ? Icons.close : Icons.addchart,
+                      color: Colors.white,
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        }
+      },
     );
-    // return Scaffold(
-    //   floatingActionButton: CircleAvatar(
-    //     backgroundColor: Colors.black54,
-    //     child: IconButton(
-    //       onPressed: () {},
-    //       icon: const Icon(
-    //         Icons.addchart,
-    //         color: Colors.white,
-    //       ),
-    //     ),
-    //   ),
-    //   body: FutureBuilder(
-    //     future: widget.jikan,
-    //     builder: (context, snapshot) {
-    //       Anime? anime = snapshot.data;
-    //       if (anime == null) {
-    //         return const Center(
-    //           child: Text("Loading..."),
-    //         );
-    //       } else {
-    //         return DetailJikanHome(
-    //           anime: anime,
-    //           snapshot: snapshot,
-    //         );
-    //       }
-    //     },
-    //   ),
-    // );
   }
 }
 
@@ -101,7 +97,7 @@ class DetailJikanHome extends StatefulWidget {
 }
 
 class _DetailJikanHomeState extends State<DetailJikanHome> {
-  Future<Stats> statistic = Future(() => Stats());
+  late Future<Stats> statistic;
 
   final keys = [
     'images',
@@ -134,35 +130,17 @@ class _DetailJikanHomeState extends State<DetailJikanHome> {
       JikanAnime.getAnimeRecommendations,
     ];
 
-    int count = 0;
-    final delay = Future.delayed(const Duration(seconds: 2));
-
     final n = fns.length;
     final id = widget.anime.malId;
 
+    statistic = JikanAnime.getAnimeStatistics(id: id);
+
     for (var i = 0; i < n; i++) {
-      final last = i == n - 1;
-      count++;
-
-      setState(() {
-        obj[keys[i]] = fns[i](id: id);
-      });
-
-      if (count == 3 && !last) {
-        count = 0;
-        await delay;
-      }
-
-      if (last) {
-        if (count == 3) {
-          count = 0;
-          await delay;
-        }
-
+      await Future.delayed(const Duration(seconds: 1)).then((value) {
         setState(() {
-          statistic = JikanAnime.getAnimeStatistics(id: id);
+          obj[keys[i]] = fns[i](id: id);
         });
-      }
+      });
     }
   }
 
@@ -338,13 +316,13 @@ class _DetailJikanHomeState extends State<DetailJikanHome> {
                   ],
                 ),
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {},
-                  child: const Text("More infomation"),
-                ),
-              ),
+              // Align(
+              //   alignment: Alignment.centerRight,
+              //   child: TextButton(
+              //     onPressed: () {},
+              //     child: const Text("More infomation"),
+              //   ),
+              // ),
               sbHeight,
               RelationDart(
                 relations: anime.relations,
@@ -355,26 +333,26 @@ class _DetailJikanHomeState extends State<DetailJikanHome> {
                   list: obj["characters"],
                 ),
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {},
-                  child: const Text("More Cast"),
-                ),
-              ),
+              // Align(
+              //   alignment: Alignment.centerRight,
+              //   child: TextButton(
+              //     onPressed: () {},
+              //     child: const Text("More Cast"),
+              //   ),
+              // ),
               sbHeight,
               BuiltStaffDart(
                 staffs: infoFList<PersonMeta>(
                   list: obj["staffs"],
                 ),
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {},
-                  child: const Text("More staff"),
-                ),
-              ),
+              // Align(
+              //   alignment: Alignment.centerRight,
+              //   child: TextButton(
+              //     onPressed: () {},
+              //     child: const Text("More staff"),
+              //   ),
+              // ),
               // sbHeight,
               // BuildReviewDart(
               //   reviews: infoFList<Review>(
@@ -387,13 +365,13 @@ class _DetailJikanHomeState extends State<DetailJikanHome> {
                   list: obj["recommendations"],
                 ),
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {},
-                  child: const Text("More recommend"),
-                ),
-              ),
+              // Align(
+              //   alignment: Alignment.centerRight,
+              //   child: TextButton(
+              //     onPressed: () {},
+              //     child: const Text("More recommend"),
+              //   ),
+              // ),
               sbHeight,
               StatisticsDart(
                 stats: statistic,
