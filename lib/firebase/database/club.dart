@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_jikan/enums/club.dart';
 import 'package:flutter_jikan/firebase/database/home.dart';
+import 'package:flutter_jikan/firebase/store/club.dart';
 
 const _pathClub = "clubClubUser";
 const _pathUser = "clubUserClub";
@@ -18,6 +19,10 @@ abstract class ClubReal {
     return _refClub(clubId).onValue;
   }
 
+  static Future<DataSnapshot> getManyClub(String id) async {
+    return await _refUser(id).get();
+  }
+
   static Future<void> updateManyMember({
     required String userId,
     required String clubId,
@@ -29,7 +34,7 @@ abstract class ClubReal {
   static Future<void> addManyHost({
     required String userId,
     required String userName,
-    required String userImage,
+    required String? userImage,
     required String clubId,
   }) async {
     final role = RoleClubType.host.name;
@@ -49,11 +54,13 @@ abstract class ClubReal {
     required String userImage,
     required String clubId,
     required String clubAccess,
+    required int clubMembers,
   }) async {
     String role = "";
 
     if (clubAccess == AccessClubType.public.name) {
       role = RoleClubType.member.name;
+      ClubStore.updateMembersClub(clubId, clubMembers + 1);
     } else {
       role = RoleClubType.none.name;
     }

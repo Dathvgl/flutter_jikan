@@ -66,7 +66,10 @@ abstract class GoRouterDart {
               ),
               GoRoute(
                 path: "myClub",
-                builder: (context, state) => const DiscussionMyClubsPage(),
+                builder: (context, state) {
+                  final extra = state.extra as List<ClubModel>;
+                  return DiscussionMyClubsPage(list: extra);
+                },
               ),
               GoRoute(
                 parentNavigatorKey: _rootNavigatorKey,

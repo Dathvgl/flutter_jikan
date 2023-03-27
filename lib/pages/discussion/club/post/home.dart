@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_jikan/components/circle_avatar.dart';
 import 'package:flutter_jikan/firebase/auth/home.dart';
 import 'package:flutter_jikan/firebase/database/post.dart';
 import 'package:flutter_jikan/models/jsons/post.dart';
@@ -121,10 +121,8 @@ class DiscussionClubPostItem extends StatelessWidget {
               Expanded(
                 child: Row(
                   children: [
-                    CircleAvatar(
-                      backgroundImage: CachedNetworkImageProvider(
-                        post.userImage ?? "",
-                      ),
+                    CircleAvatarDart(
+                      backgroundImage: post.userImage,
                     ),
                     const SizedBox(width: 10),
                     Expanded(

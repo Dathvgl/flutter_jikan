@@ -12,6 +12,7 @@ class ClubModel {
   String? description;
   String? category;
   String? access;
+  int? members;
   String? dateCreate;
 
   ClubModel({
@@ -23,6 +24,7 @@ class ClubModel {
     this.description,
     this.category,
     this.access,
+    this.members,
     this.dateCreate,
   });
 

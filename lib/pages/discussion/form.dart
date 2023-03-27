@@ -1,12 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_jikan/components/scaffod.dart';
 import 'package:flutter_jikan/enums/club.dart';
 import 'package:flutter_jikan/extension/home.dart';
 import 'package:flutter_jikan/firebase/auth/home.dart';
 import 'package:flutter_jikan/firebase/database/club.dart';
+import 'package:flutter_jikan/firebase/storage/club.dart';
 import 'package:flutter_jikan/firebase/store/club.dart';
 import 'package:flutter_jikan/models/jsons/club.dart';
+import 'package:flutter_jikan/pages/discussion/image.dart';
 import 'package:go_router_flow/go_router_flow.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class DiscussionFormPage extends StatefulWidget {
@@ -192,6 +197,8 @@ class DiscussionFormAlert extends StatefulWidget {
 
 class _DiscussionFormAlertState extends State<DiscussionFormAlert> {
   AccessClubType? access = AccessClubType.public;
+  File? clubIcon;
+  File? clubImage;
 
   @override
   void initState() {
@@ -256,9 +263,29 @@ class _DiscussionFormAlertState extends State<DiscussionFormAlert> {
       formKey.currentState?.save();
 
       club.id = widget.club.id;
-      club.dateCreate = widget.club.dateCreate;
-      club.userId = widget.club.userId;
       club.access = AccessClubType.values[access?.index ?? 0].name;
+
+      if (clubIcon != null) {
+        final snapshot = await ClubStorage.putFile(
+          uid: widget.club.id ?? "",
+          name: "icon",
+          file: clubIcon!,
+        );
+
+        final url = await snapshot.ref.getDownloadURL();
+        club.icon = url;
+      }
+
+      if (clubImage != null) {
+        final snapshot = await ClubStorage.putFile(
+          uid: widget.club.id ?? "",
+          name: "imageUrl",
+          file: clubImage!,
+        );
+
+        final url = await snapshot.ref.getDownloadURL();
+        club.imageUrl = url;
+      }
 
       await ClubStore.updateClub(club).then((value) async {
         if (mounted) {
@@ -316,6 +343,16 @@ class _DiscussionFormAlertState extends State<DiscussionFormAlert> {
                 onSaved: (newValue) {
                   club.description = newValue;
                 },
+              ),
+              sbHeight,
+              DiscussionClubImage(
+                selectText: "Select Club Icon",
+                onChanged: (value) => clubIcon = value,
+              ),
+              sbHeight,
+              DiscussionClubImage(
+                selectText: "Select Club Image",
+                onChanged: (value) => clubImage = value,
               ),
               sbHeight,
               DropdownButtonHideUnderline(

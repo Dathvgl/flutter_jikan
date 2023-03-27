@@ -3,6 +3,7 @@ import 'package:flutter_jikan/enums/club.dart';
 import 'package:flutter_jikan/extension/home.dart';
 import 'package:flutter_jikan/firebase/auth/home.dart';
 import 'package:flutter_jikan/firebase/database/club.dart';
+import 'package:flutter_jikan/firebase/store/club.dart';
 import 'package:flutter_jikan/main.dart';
 import 'package:flutter_jikan/models/jsons/user.dart';
 import 'package:flutter_jikan/models/providers/theme.dart';
@@ -67,7 +68,12 @@ class DiscussionClubMember extends StatelessWidget {
                   ClubReal.deleteManyMember(
                     clubId: clubId,
                     userId: item.id ?? "",
-                  );
+                  ).then((value) {
+                    ClubStore.updateMembersClub(
+                      clubId,
+                      list.length - 1,
+                    );
+                  });
                   break;
               }
             },
@@ -133,11 +139,13 @@ class DiscussionClubMember extends StatelessWidget {
 
 class DiscussionClubMemberAlert extends StatelessWidget {
   final String clubId;
+  final int members;
   final List<UserMemberModel> list;
 
   const DiscussionClubMemberAlert({
     super.key,
     required this.clubId,
+    required this.members,
     required this.list,
   });
 
@@ -196,7 +204,12 @@ class DiscussionClubMemberAlert extends StatelessWidget {
                       clubId: clubId,
                       userId: element.id ?? "",
                       role: RoleClubType.member.name,
-                    );
+                    ).then((value) {
+                      ClubStore.updateMembersClub(
+                        clubId,
+                        members + 1,
+                      );
+                    });
                   }
                 },
               ),
@@ -238,7 +251,12 @@ class DiscussionClubMemberAlert extends StatelessWidget {
                           clubId: clubId,
                           userId: item.id ?? "",
                           role: RoleClubType.member.name,
-                        );
+                        ).then((value) {
+                          ClubStore.updateMembersClub(
+                            clubId,
+                            members + 1,
+                          );
+                        });
                       },
                     ),
                   ],

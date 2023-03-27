@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_jikan/components/circle_avatar.dart';
 import 'package:flutter_jikan/extension/home.dart';
+import 'package:flutter_jikan/main.dart';
 import 'package:flutter_jikan/models/jsons/club.dart';
 import 'package:go_router_flow/go_router_flow.dart';
 
@@ -49,21 +51,33 @@ class DiscussionItemTile extends StatelessWidget {
         extra: club,
       ),
       child: ListTile(
-        leading: const CircleAvatar(),
-        title: Text(club.name ?? ""),
+        leading: CircleAvatarDart(
+          backgroundImage: club.icon,
+          child: const Icon(Icons.house),
+        ),
+        title: Text(
+          club.name ?? "",
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         trailing: Text(
           "${(club.category ?? "").toCapitalized()}${"\n"}Club",
           textDirection: TextDirection.rtl,
         ),
-        subtitle: RichText(
-          text: TextSpan(
-            children: [
-              const WidgetSpan(
-                child: Icon(Icons.people),
+        subtitle: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.people),
+            const SizedBox(width: 10),
+            Text(
+              kDot(club.members ?? 0),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
               ),
-              TextSpan(text: " ${club.name}"),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

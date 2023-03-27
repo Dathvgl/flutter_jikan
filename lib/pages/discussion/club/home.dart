@@ -11,6 +11,7 @@ import 'package:flutter_jikan/firebase/auth/home.dart';
 import 'package:flutter_jikan/firebase/database/club.dart';
 import 'package:flutter_jikan/firebase/database/comment.dart';
 import 'package:flutter_jikan/firebase/database/post.dart';
+import 'package:flutter_jikan/firebase/store/club.dart';
 import 'package:flutter_jikan/firebase/store/user.dart';
 import 'package:flutter_jikan/main.dart';
 import 'package:flutter_jikan/models/jsons/club.dart';
@@ -137,6 +138,7 @@ class _DiscussionClubPageState extends State<DiscussionClubPage> {
             userImage: auth.info["imageUrl"],
             clubId: widget.club.id ?? "",
             clubAccess: widget.club.access ?? AccessClubType.public.name,
+            clubMembers: members.length,
           );
         },
       );
@@ -147,7 +149,10 @@ class _DiscussionClubPageState extends State<DiscussionClubPage> {
           child: Text("Waiting"),
         );
       } else {
-        return const SizedBox();
+        return const ElevatedButton(
+          onPressed: null,
+          child: Text("Joined"),
+        );
       }
     }
   }
@@ -170,6 +175,7 @@ class _DiscussionClubPageState extends State<DiscussionClubPage> {
               builder: (context) {
                 return DiscussionClubMemberAlert(
                   clubId: widget.club.id ?? "",
+                  members: members.length,
                   list: list.where((item) {
                     return item.role == RoleClubType.none.name;
                   }).toList(),
@@ -181,7 +187,12 @@ class _DiscussionClubPageState extends State<DiscussionClubPage> {
             ClubReal.deleteManyMember(
               userId: auth.uid,
               clubId: widget.club.id ?? "",
-            );
+            ).then((value) {
+              ClubStore.updateMembersClub(
+                widget.club.id ?? "",
+                members.length - 1,
+              );
+            });
             break;
           // case "delete":
           //   break;
@@ -231,6 +242,7 @@ class _DiscussionClubPageState extends State<DiscussionClubPage> {
     final date = DateTime.parse(widget.club.dateCreate ?? "");
     return CustomScaffold(
       drawer: null,
+      title: "Club detail",
       body: ListView(
         children: [
           SizedBox(
@@ -283,8 +295,8 @@ class _DiscussionClubPageState extends State<DiscussionClubPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                            "${(widget.club.access ?? "").toCapitalized()} club"),
-                        Text(DateFormat.yMd().format(date)),
+                            "Access: ${(widget.club.access ?? "").toCapitalized()} club"),
+                        Text("Created: ${DateFormat.yMd().format(date)}"),
                       ],
                     ),
                     authBuild(

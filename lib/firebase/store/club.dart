@@ -11,14 +11,23 @@ abstract class ClubStore {
   }
 
   static Future<void> updateClub(ClubModel club) async {
-    await _store.doc(club.id).update(club.toJson());
+    final map = club.toJson()
+      ..removeWhere((key, value) {
+        return value == null;
+      });
+
+    await _store.doc(club.id).update(map);
   }
 
-  static Future<QuerySnapshot<Map<String, dynamic>>> getClubList() async {
-    return await _store.get();
+  static Future<void> updateMembersClub(String id, int num) async {
+    await _store.doc(id).update({"members": num});
   }
 
-  static Future<void> deleteClub(String uid) async {
-    // await _store.doc(uid).delete();
+  static Stream<QuerySnapshot<Map<String, dynamic>>> listenClub() {
+    return _store.snapshots();
   }
+
+  // static Future<void> deleteClub(String uid) async {
+  //   await _store.doc(uid).delete();
+  // }
 }

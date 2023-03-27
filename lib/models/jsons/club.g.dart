@@ -15,6 +15,7 @@ ClubModel _$ClubModelFromJson(Map<String, dynamic> json) => ClubModel(
       description: json['description'] as String?,
       category: json['category'] as String?,
       access: json['access'] as String?,
+      members: json['members'] as int?,
       dateCreate: json['dateCreate'] as String?,
     );
 
@@ -27,5 +28,6 @@ Map<String, dynamic> _$ClubModelToJson(ClubModel instance) => <String, dynamic>{
       'description': instance.description,
       'category': instance.category,
       'access': instance.access,
+      'members': instance.members,
       'dateCreate': instance.dateCreate,
     };

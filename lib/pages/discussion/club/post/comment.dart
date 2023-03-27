@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_jikan/components/circle_avatar.dart';
 import 'package:flutter_jikan/components/scaffod.dart';
 import 'package:flutter_jikan/firebase/auth/home.dart';
 import 'package:flutter_jikan/firebase/database/comment.dart';
@@ -110,7 +111,9 @@ class _DiscussionClubPostCommentState extends State<DiscussionClubPostComment> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const CircleAvatar(),
+                        CircleAvatarDart(
+                          backgroundImage: item.userImage,
+                        ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: Column(
