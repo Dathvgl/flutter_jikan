@@ -11,7 +11,6 @@ import 'package:flutter_jikan/firebase/store/club.dart';
 import 'package:flutter_jikan/models/jsons/club.dart';
 import 'package:flutter_jikan/pages/discussion/image.dart';
 import 'package:go_router_flow/go_router_flow.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class DiscussionFormPage extends StatefulWidget {
