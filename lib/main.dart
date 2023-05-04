@@ -4,11 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_jikan/components/navigation/home.dart';
 import 'package:flutter_jikan/firebase/auth/home.dart';
-import 'package:flutter_jikan/firebase/database/home.dart';
 import 'package:flutter_jikan/firebase/firebase_options.dart';
-import 'package:flutter_jikan/firebase/storage/home.dart';
-import 'package:flutter_jikan/firebase/store/home.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 // flutter run --enable-software-rendering
@@ -23,11 +19,6 @@ Future<void> init() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  Get.lazyPut(() => AuthFirebase());
-  Get.lazyPut(() => StorageFirebase());
-  Get.lazyPut(() => StoreFirebase());
-  Get.lazyPut(() => RealtimeFirebase());
 }
 
 class MyApp extends StatelessWidget {

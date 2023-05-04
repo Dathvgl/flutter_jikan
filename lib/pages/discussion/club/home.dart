@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_jikan/components/scaffod.dart';
@@ -19,7 +20,6 @@ import 'package:flutter_jikan/models/jsons/user.dart';
 import 'package:flutter_jikan/pages/discussion/club/member.dart';
 import 'package:flutter_jikan/pages/discussion/club/tabber.dart';
 import 'package:flutter_jikan/pages/discussion/form.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class DiscussionClubPage extends StatefulWidget {
@@ -73,7 +73,7 @@ class _DiscussionClubPageState extends State<DiscussionClubPage> {
 
             for (final postId in listPost) {
               map.forEach((key, value) {
-                mapPost.assign("$postId/$key", value);
+                mapPost["$postId/$key"] = value;
               });
 
               Map<String, dynamic> mapComment = {};
@@ -84,7 +84,7 @@ class _DiscussionClubPageState extends State<DiscussionClubPage> {
 
               for (final commentId in listComment) {
                 map.forEach((key, value) {
-                  mapComment.assign("$commentId/$key", value);
+                  mapComment["$commentId/$key"] = value;
                 });
               }
 

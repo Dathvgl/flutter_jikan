@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_jikan/components/circle_avatar.dart';
 import 'package:flutter_jikan/firebase/auth/home.dart';
 import 'package:flutter_jikan/main.dart';
 import 'package:flutter_jikan/models/providers/theme.dart';
@@ -35,6 +36,16 @@ Widget drawerHeader({
   required BuildContext context,
   required void Function() close,
 }) {
+  Widget iconAvatar() {
+    return const CircleAvatar(
+      backgroundColor: Colors.white,
+      child: Icon(
+        Icons.person,
+        color: Colors.black,
+      ),
+    );
+  }
+
   return Container(
     padding: const EdgeInsets.all(20),
     color: Theme.of(context).primaryColor,
@@ -43,19 +54,20 @@ Widget drawerHeader({
         close();
 
         if (auth.isAuthen) {
-          context.push("/user/info");
+          // context.push("/user/info");
         } else {
           context.push("/user/screen");
         }
       },
       child: Row(
         children: [
-          const CircleAvatar(
-            backgroundColor: Colors.white,
-            child: Icon(
-              Icons.person,
-              color: Colors.black,
-            ),
+          authBuild(
+            done: auth.info["imageUrl"] != null
+                ? CircleAvatarDart(
+                    backgroundImage: auth.info["imageUrl"],
+                  )
+                : iconAvatar(),
+            none: iconAvatar(),
           ),
           const SizedBox(
             width: 20,

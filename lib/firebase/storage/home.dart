@@ -1,7 +1,6 @@
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:get/get.dart';
 
-StorageFirebase get storage => Get.find<StorageFirebase>();
+StorageFirebase storage = StorageFirebase();
 
 class StorageFirebase {
   final _firestorage = FirebaseStorage.instance;

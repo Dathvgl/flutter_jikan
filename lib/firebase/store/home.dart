@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:get/get.dart';
 
-StoreFirebase get firestore => Get.find<StoreFirebase>();
+StoreFirebase firestore = StoreFirebase();
 
 class StoreFirebase {
   final _firestore = FirebaseFirestore.instance;

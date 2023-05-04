@@ -7,11 +7,13 @@ import 'package:flutter_jikan/extension/home.dart';
 import 'package:flutter_jikan/firebase/store/user.dart';
 import 'package:flutter_jikan/models/jsons/user.dart';
 import 'package:flutter_jikan/models/providers/my_list.dart';
-import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:faker/faker.dart';
 import 'package:provider/provider.dart';
 
-AuthFirebase get auth => Get.find<AuthFirebase>();
+AuthFirebase auth = AuthFirebase();
+
+final _faker = Faker();
 
 class AuthFirebase {
   final instance = FirebaseAuth.instance;
@@ -38,7 +40,7 @@ class AuthFirebase {
             .then((value) {
           final item = UserModel(
             id: value.user?.uid,
-            name: "Unknow",
+            name: _faker.internet.userName(),
             dateCreate: DateTime.now().toIso8601String(),
           );
 
@@ -91,7 +93,17 @@ class AuthFirebase {
         accessToken: userAuth?.accessToken,
       );
 
-      await auth.instance.signInWithCredential(credential);
+      final result = await auth.instance.signInWithCredential(credential);
+      if (result.additionalUserInfo?.isNewUser ?? false) {
+        final item = UserModel(
+          id: result.user?.uid,
+          name: result.additionalUserInfo?.profile?["name"],
+          imageUrl: result.additionalUserInfo?.profile?["picture"],
+          dateCreate: DateTime.now().toIso8601String(),
+        );
+
+        UserStore.addUser(item);
+      }
     } on FirebaseAuthException catch (e) {
       final code = e.code;
       switch (code) {
@@ -104,7 +116,7 @@ class AuthFirebase {
       return "Error sign in";
     }
 
-    return "Error sign in";
+    return null;
   }
 
   Future<String?> facebook() async {
@@ -115,7 +127,17 @@ class AuthFirebase {
         user.accessToken!.token,
       );
       try {
-        await auth.instance.signInWithCredential(credential);
+        final result = await auth.instance.signInWithCredential(credential);
+        if (result.additionalUserInfo?.isNewUser ?? false) {
+        final item = UserModel(
+          id: result.user?.uid,
+          name: result.additionalUserInfo?.profile?["name"],
+          imageUrl: result.additionalUserInfo?.profile?["picture"],
+          dateCreate: DateTime.now().toIso8601String(),
+        );
+
+        UserStore.addUser(item);
+      }
       } on FirebaseAuthException catch (e) {
         final code = e.code;
         switch (code) {
@@ -129,7 +151,7 @@ class AuthFirebase {
       }
     }
 
-    return "Error sign in";
+    return null;
   }
 
   Future<void> signOut({
