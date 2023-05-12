@@ -64,7 +64,7 @@ class _MyListPageState extends State<MyListPage> with TickerProviderStateMixin {
         content: TextButton(
           child: const Text("Sign in"),
           onPressed: () {
-            context.push("/user");
+            context.push("/user/screen");
           },
         ),
       ),

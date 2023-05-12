@@ -125,7 +125,11 @@ class _DiscussionClubPageState extends State<DiscussionClubPage> {
 
   Widget joinAuth(List<UserMemberModel> list) {
     final user = list.firstWhereOrNull((element) {
-      return element.id == auth.uid;
+      try {
+        return element.id == auth.uid;
+      } catch (e) {
+        return false;
+      }
     });
 
     if (user == null) {

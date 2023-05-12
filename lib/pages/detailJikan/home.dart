@@ -68,7 +68,9 @@ class DetailJikanPage extends StatelessWidget {
                       }
                     },
                     icon: Icon(
-                      check ? Icons.close : Icons.addchart,
+                      check
+                          ? const IconData(0xe25c, fontFamily: 'MaterialIcons')
+                          : const IconData(0xe25b, fontFamily: 'MaterialIcons'),
                       color: Colors.white,
                     ),
                   );

@@ -1,13 +1,17 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_jikan/components/circle_avatar.dart';
 import 'package:flutter_jikan/components/scaffod.dart';
 import 'package:flutter_jikan/firebase/auth/home.dart';
+import 'package:flutter_jikan/firebase/database/club.dart';
 import 'package:flutter_jikan/firebase/database/comment.dart';
+import 'package:flutter_jikan/main.dart';
 import 'package:flutter_jikan/models/jsons/comment.dart';
 import 'package:flutter_jikan/models/jsons/post.dart';
+import 'package:flutter_jikan/models/jsons/user.dart';
 import 'package:flutter_jikan/pages/discussion/club/dialog.dart';
 import 'package:flutter_jikan/pages/discussion/club/post/home.dart';
 import 'package:intl/intl.dart';
@@ -30,13 +34,22 @@ class DiscussionClubPostComment extends StatefulWidget {
 
 class _DiscussionClubPostCommentState extends State<DiscussionClubPostComment> {
   List<CommentModel> list = [];
-  StreamSubscription<DatabaseEvent>? listen;
+  List<UserMemberModel> members = [];
+  StreamSubscription<DatabaseEvent>? userListen;
+  StreamSubscription<DatabaseEvent>? commentListen;
 
   @override
   void initState() {
     super.initState();
 
-    listen = CommentReal.getComments(widget.post.id ?? "").listen((event) {
+    userListen = ClubReal.getManyMember(widget.clubId).listen((event) {
+      setState(() {
+        members = UserMemberModel.init(event.snapshot);
+      });
+    });
+
+    commentListen =
+        CommentReal.getComments(widget.post.id ?? "").listen((event) {
       final array = CommentModel.init(event.snapshot);
 
       setState(() {
@@ -52,11 +65,33 @@ class _DiscussionClubPostCommentState extends State<DiscussionClubPostComment> {
 
   @override
   void dispose() {
-    listen?.cancel();
+    userListen?.cancel();
+    commentListen?.cancel();
     super.dispose();
   }
 
   final sbHeight = const SizedBox(height: 20);
+
+  Widget joinAuth({required Widget child}) {
+    final user = members.firstWhereOrNull((element) {
+      try {
+        return element.id == auth.uid;
+      } catch (e) {
+        return false;
+      }
+    });
+
+    if (user == null) {
+      return const SizedBox();
+    } else {
+      return Column(
+        children: [
+          sbHeight,
+          child,
+        ],
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,26 +103,30 @@ class _DiscussionClubPostCommentState extends State<DiscussionClubPostComment> {
           mainAxisSize: MainAxisSize.min,
           children: [
             DiscussionClubPostItem(clubId: widget.clubId, post: widget.post),
-            sbHeight,
-            DiscussionClubDialog(
-              openText: "Add comment",
-              labelText: "Comment content",
-              submitText: "Add comment",
-              onPressed: (text) {
-                final item = CommentModel(
-                  id: const Uuid().v4(),
-                  userId: auth.uid,
-                  userName: auth.info["name"],
-                  content: text,
-                  dateCreate: DateTime.now().toIso8601String(),
-                );
+            authBuild(
+              done: joinAuth(
+                child: DiscussionClubDialog(
+                  openText: "Add comment",
+                  labelText: "Comment content",
+                  submitText: "Add comment",
+                  onPressed: (text) {
+                    final item = CommentModel(
+                      id: const Uuid().v4(),
+                      userId: auth.uid,
+                      userName: auth.info["name"],
+                      content: text,
+                      dateCreate: DateTime.now().toIso8601String(),
+                    );
 
-                CommentReal.setComment(
-                  uid: widget.post.id ?? "",
-                  userId: auth.uid,
-                  data: item,
-                );
-              },
+                    CommentReal.setComment(
+                      uid: widget.post.id ?? "",
+                      userId: auth.uid,
+                      data: item,
+                    );
+                  },
+                ),
+              ),
+              none: const SizedBox(),
             ),
             sbHeight,
             ListView.separated(

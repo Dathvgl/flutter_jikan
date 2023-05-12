@@ -73,6 +73,7 @@ class _DiscussionClubTabbarState extends State<DiscussionClubTabbar>
         [
           DiscussionClubPost(
             clubId: widget.clubId,
+            members: widget.list,
           ),
           DiscussionClubMember(
             clubId: widget.clubId,

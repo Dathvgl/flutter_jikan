@@ -1,22 +1,28 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_jikan/components/circle_avatar.dart';
 import 'package:flutter_jikan/firebase/auth/home.dart';
 import 'package:flutter_jikan/firebase/database/post.dart';
 import 'package:flutter_jikan/models/jsons/post.dart';
+import 'package:flutter_jikan/models/jsons/user.dart';
 import 'package:flutter_jikan/pages/discussion/club/dialog.dart';
 import 'package:go_router_flow/go_router_flow.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../main.dart';
+
 class DiscussionClubPost extends StatefulWidget {
   final String clubId;
+  final List<UserMemberModel> members;
 
   const DiscussionClubPost({
     super.key,
     required this.clubId,
+    required this.members,
   });
 
   @override
@@ -51,30 +57,51 @@ class _DiscussionClubPostState extends State<DiscussionClubPost> {
     super.dispose();
   }
 
+  Widget joinAuth({required Widget child}) {
+    final user = widget.members.firstWhereOrNull((element) {
+      try {
+        return element.id == auth.uid;
+      } catch (e) {
+        return false;
+      }
+    });
+
+    if (user == null) {
+      return const SizedBox();
+    } else {
+      return child;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Wrap(
       children: [
-        DiscussionClubDialog(
-          openText: "Add Post",
-          labelText: "Post content",
-          submitText: "Create Post",
-          onPressed: (text) {
-            final item = PostModel(
-              id: const Uuid().v4(),
-              userId: auth.uid,
-              userName: auth.info["name"],
-              userImage: auth.info["imageUrl"],
-              content: text,
-              dateCreate: DateTime.now().toIso8601String(),
-            );
+        authBuild(
+          done: joinAuth(
+            child: DiscussionClubDialog(
+              openText: "Add Post",
+              labelText: "Post content",
+              submitText: "Create Post",
+              onPressed: (text) {
+                final item = PostModel(
+                  id: const Uuid().v4(),
+                  userId: auth.uid,
+                  userName: auth.info["name"],
+                  userImage: auth.info["imageUrl"],
+                  content: text,
+                  dateCreate: DateTime.now().toIso8601String(),
+                );
 
-            PostReal.setPost(
-              uid: widget.clubId,
-              userId: auth.uid,
-              data: item,
-            );
-          },
+                PostReal.setPost(
+                  uid: widget.clubId,
+                  userId: auth.uid,
+                  data: item,
+                );
+              },
+            ),
+          ),
+          none: const SizedBox(),
         ),
         Padding(
           padding: const EdgeInsets.all(10),

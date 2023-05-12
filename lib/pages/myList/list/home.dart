@@ -26,13 +26,16 @@ class _MyListListState extends State<MyListList> {
   int count = 0;
   String type = "All";
   String sort = "all";
+
+  List<MyListModel> baseList = [];
   List<MyListModel> myList = [];
 
   @override
   void initState() {
     super.initState();
     count = widget.myList.length;
-    myList = widget.myList;
+    baseList = [...widget.myList];
+    myList = [...widget.myList];
   }
 
   final pdBase = 10.0;
@@ -91,6 +94,36 @@ class _MyListListState extends State<MyListList> {
 
   @override
   Widget build(BuildContext context) {
+    context.select((MyListProvider value) {
+      var values = value.userMyList
+          .where((element) {
+            if (widget.state == "All") {
+              return true;
+            } else {
+              return element.state == widget.state;
+            }
+          })
+          .toList()
+          .where((element) {
+            return type == "All" ? true : element.type == type;
+          })
+          .toList()
+        ..sort((a, b) {
+          switch (sort) {
+            case "name":
+              return a.title!.toLowerCase().compareTo(b.title!.toLowerCase());
+            case "score":
+              return a.score! - b.score!;
+            case "progress":
+              return a.progress! - b.progress!;
+            default:
+              return 0;
+          }
+        });
+
+      myList = [...values];
+    });
+
     return Column(
       children: [
         Row(
@@ -113,9 +146,9 @@ class _MyListListState extends State<MyListList> {
                     List<MyListModel> list = [];
 
                     if (value == "All") {
-                      list = widget.myList;
+                      list = [...baseList];
                     } else {
-                      list = widget.myList.where((item) {
+                      list = [...baseList].where((item) {
                         return item.type == value;
                       }).toList();
                     }
@@ -164,10 +197,10 @@ class _MyListListState extends State<MyListList> {
                   if (value is String) {
                     List<MyListModel> list = [];
 
-                    if (value == "All") {
-                      list = widget.myList;
+                    if (type == "All") {
+                      list = [...baseList];
                     } else {
-                      list = widget.myList.where((item) {
+                      list = [...baseList].where((item) {
                         return item.type == type;
                       }).toList();
                     }
@@ -211,34 +244,7 @@ class _MyListListState extends State<MyListList> {
             },
             itemCount: myList.length,
             itemBuilder: (context, index) {
-              return Builder(builder: (context) {
-                return MyListListItem(
-                  item: context.select((MyListProvider value) {
-                    if (widget.myList.length !=
-                        value.userMyList.where((element) {
-                          if (widget.state == "All") {
-                            return true;
-                          } else {
-                            return element.state == widget.state;
-                          }
-                        }).length) {
-                      return null;
-                    }
-                    if (widget.myList.length != myList.length) {
-                      return value
-                          .getItem(value.userMyList.indexWhere((element) {
-                        return element.id == myList[index].id;
-                      }));
-                    } else {
-                      if (widget.state == "All") {
-                        return value.getItem(index);
-                      } else {
-                        return value.getItemState(index, widget.state);
-                      }
-                    }
-                  }),
-                );
-              });
+              return MyListListItem(item: myList[index]);
             },
           ),
         ),

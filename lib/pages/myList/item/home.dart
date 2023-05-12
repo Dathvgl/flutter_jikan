@@ -51,10 +51,7 @@ class _MyListItemState extends State<MyListItem> {
 
   final sbHeight = const SizedBox(height: 30);
 
-  void callbackMap({
-    required String key,
-    required dynamic value,
-  }) {
+  void callbackMap({required String key, required dynamic value}) {
     switch (value.runtimeType) {
       case String:
         if (key == "state") {
@@ -127,7 +124,15 @@ class _MyListItemState extends State<MyListItem> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.myItem.title ?? "Name title"),
+              Text(
+                widget.myItem.title ?? "Name title",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               sbHeight,
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -184,12 +189,12 @@ class _MyListItemState extends State<MyListItem> {
                 ],
               ),
               MyListItemCarouselEmpty(
-                defaultIndex: map["progress"] ?? 0,
-                list: List.generate((widget.myItem.totalProgress ?? 0) + 1,
-                    (index) => index).toList(),
-                callbackItem: ({
-                  required int num,
-                }) {
+                defaultIndex: map["progress"],
+                list: List.generate(
+                  (widget.myItem.totalProgress ?? 0) + 1,
+                  (index) => index,
+                ).toList(),
+                callbackItem: ({required int num}) {
                   callbackMap(
                     key: "progress",
                     value: num,
@@ -214,9 +219,7 @@ class _MyListItemState extends State<MyListItem> {
                   "Great",
                   "Masterpiece",
                 ],
-                callbackItem: ({
-                  required int num,
-                }) {
+                callbackItem: ({required int num}) {
                   callbackMap(
                     key: "score",
                     value: num,

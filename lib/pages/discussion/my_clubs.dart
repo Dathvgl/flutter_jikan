@@ -42,13 +42,22 @@ class DiscussionMyClubsPage extends StatelessWidget {
                   ),
                 );
               } else {
+                if (data.value == null) {
+                  return SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    child: const Center(
+                      child: Text("No data!"),
+                    ),
+                  );
+                }
+
                 List<String> ids = [];
-          
+
                 Map<String, Object>.from(data.value as Map)
                     .forEach((key, value) {
                   ids.add(key);
                 });
-          
+
                 return httpBuild(
                   snapshot: snapshot,
                   widget: Expanded(
@@ -65,7 +74,7 @@ class DiscussionMyClubsPage extends StatelessWidget {
                         final item = list.firstWhere((element) {
                           return element.id == ids[index];
                         });
-                            
+
                         return DiscussionItemTile(club: item);
                       },
                     ),

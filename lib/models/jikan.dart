@@ -46,8 +46,18 @@ abstract class JikanRoot {
     return AspectRatio(
       aspectRatio: 0.75,
       child: CachedNetworkImage(
-        fit: BoxFit.cover,
         imageUrl: url,
+        imageBuilder: (context, imageProvider) {
+          return Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              image: DecorationImage(
+                image: imageProvider,
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        },
         progressIndicatorBuilder: (context, url, progress) {
           return Center(
             child: CircularProgressIndicator(

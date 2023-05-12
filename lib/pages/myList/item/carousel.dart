@@ -27,7 +27,7 @@ Widget _carousel({
   required int defaultIndex,
   required CarouselController controller,
   required List list,
-  required void Function({required int index}) carouselIndex,
+  required Future<void> Function({required int index}) carouselIndex,
   required void Function({required int index}) carouselPage,
 }) {
   return SizedBox(
@@ -48,7 +48,7 @@ Widget _carousel({
       ),
       items: List.generate(list.length, (index) {
         return InkWell(
-          onTap: () => carouselIndex(index: index),
+          onTap: () async => await carouselIndex(index: index),
           child: Container(
             width: _width,
             padding: const EdgeInsets.all(10),
@@ -62,7 +62,7 @@ Widget _carousel({
   );
 }
 
-class MyListItemCarouselEmpty extends StatelessWidget {
+class MyListItemCarouselEmpty extends StatefulWidget {
   final int defaultIndex;
   final List<int> list;
   final void Function({required int num}) callbackItem;
@@ -75,29 +75,31 @@ class MyListItemCarouselEmpty extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final controller = CarouselController();
+  State<MyListItemCarouselEmpty> createState() =>
+      _MyListItemCarouselEmptyState();
+}
 
-    void carouselIndex({
-      required int index,
-    }) {
-      controller.animateToPage(index);
-      callbackItem(num: index);
+class _MyListItemCarouselEmptyState extends State<MyListItemCarouselEmpty> {
+  final controller = CarouselController();
+
+  @override
+  Widget build(BuildContext context) {
+    Future<void> carouselIndex({required int index}) async {
+      await controller.animateToPage(index);
+      widget.callbackItem(num: index);
     }
 
-    void carouselPage({
-      required int index,
-    }) {
-      callbackItem(num: index);
+    void carouselPage({required int index}) {
+      widget.callbackItem(num: index);
     }
 
     return Stack(
       children: [
         _selected,
         _carousel(
-          defaultIndex: defaultIndex,
+          defaultIndex: widget.defaultIndex,
           controller: controller,
-          list: list,
+          list: widget.list,
           carouselIndex: carouselIndex,
           carouselPage: carouselPage,
         )
@@ -139,16 +141,12 @@ class _MyListItemCarouselStringState extends State<MyListItemCarouselString> {
     });
   }
 
-  void carouselIndex({
-    required int index,
-  }) {
-    controller.animateToPage(index);
+  Future<void> carouselIndex({required int index}) async {
+    await controller.animateToPage(index);
     carouselPage(index: index);
   }
 
-  void carouselPage({
-    required int index,
-  }) {
+  void carouselPage({required int index}) {
     widget.callbackItem(num: index);
 
     setState(() {
